@@ -22,8 +22,11 @@ import com.nttdata.appbanca.model.ProductType;
 import com.nttdata.appbanca.service.CustomerService;
 import com.nttdata.appbanca.service.ProductService;
 
+import lombok.extern.log4j.Log4j2;
+
 
 @RestController
+@Log4j2
 public class ProductController {
 	
 	@Autowired
@@ -47,31 +50,39 @@ public class ProductController {
 	@PostMapping("/product")
 	public ResponseEntity<?> saveProduct(@RequestBody Product product){
 		try {
-			Product productsave = productService.saveProduct(product);
 			//if(Predicate<>productService.ExistsCustomerId(product))
 			Predicate<Product> valid = (producto) -> { producto = product;
 				                                       return IsValid(producto); };
-			if( valid.test(product) ) 
+			if( valid.test(product) ) {
+				Product productsave = productService.saveProduct(product);
 				return  new ResponseEntity<Product>(productsave, HttpStatus.CREATED); 
+			}
 			else
-				return new ResponseEntity<String>(  messageError , HttpStatus.NOT_FOUND);
+				return new ResponseEntity<ApiError>( new ApiError(HttpStatus.NOT_FOUND.value()
+						                             ,  "${product.validation.CustomerInvalid}" )
+						                             , HttpStatus.NOT_FOUND);
 		}catch (Exception e) {
-			System.out.println(product);
+			//System.out.println(product);
+			 e.printStackTrace();
 			return new ResponseEntity<String>(  e.fillInStackTrace().toString() , HttpStatus.INTERNAL_SERVER_ERROR);
 		} 
 	}
 	
 	private boolean IsValid(Product producto) {
 		if ( // El _customerid debe existir 
-			 isCustomerIdValid(producto) &&        
+			 isCustomerIdValid(producto) 
+			 
 			 // El cliente tipo persona no puede tener crédito empresarial
-			 isCreditoEmpPerCustomerValid(producto) &&    
+			 && isCreditoEmpPerCustomerValid(producto) 
+			 
 			 // Un cliente tipo persona solo debe tener un credito de tipo personal(producto)
-			 isCreditPerCustomerValid(producto) &&        
+			 //&& isCreditPerCustomerValid(producto)       
+			 
 			 // El cliente persona solo puede tener 1 cuenta de ahorro, una cuenta corriento o un plazo fijo
-			 isOneCustomerOneAhorroAndOneCuentaCorriente(producto) && 
-			 //
-			 IsCustomerEmpresarialhasCuentaAhorrosOPlazoFijo(producto)  
+			 //&& isOneCustomerOneAhorroAndOneCuentaCorriente(producto) && 
+			 
+			 //Si el cliente es empresarial no puede tener cuenta de ahorro ni plazo fijo
+			 //&& IsCustomerEmpresarialhasCuentaAhorrosOPlazoFijo(producto)  
 			 )
 			return true;
 		else {
@@ -83,7 +94,7 @@ public class ProductController {
 	private boolean IsCustomerEmpresarialhasCuentaAhorrosOPlazoFijo(Product producto) {
 		if( productService.getCustomerTipo(producto).equals("empresa") 
 			&& (  producto.getTipo().name().equals("ahorro") 
-			   || producto.getTipo().name().equals("")  )	{
+			   || producto.getTipo().name().equals("plazoFijo")  )  )	{
 			return false;
 		} else
 			return true;
