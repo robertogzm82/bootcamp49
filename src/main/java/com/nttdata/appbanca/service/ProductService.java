@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.nttdata.appbanca.model.Customer;
 import com.nttdata.appbanca.model.Product;
+import com.nttdata.appbanca.model.ProductType;
 
 public interface ProductService {
 
@@ -15,10 +16,13 @@ public interface ProductService {
 	Optional<Product> getProduct(String id);
 
 	List<Product> getAllProduct();
-
-	boolean ExistsCustomerId(Product product);
 	
 	String getCustomerTipo(Product product);
-
-	int countTipoProducto(Product producto,String tipoProducto);
+	
+	List<Product> findByCustomerId(String id);
+	
+	int getConsumoTotal(Product producto);
+	
+	int cantProducTipoProducCustomer(Product product,ProductType producttype);
+	
 }

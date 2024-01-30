@@ -1,9 +1,9 @@
 package com.nttdata.appbanca.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -11,27 +11,24 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Document(collection="product")
+@Document(collection="transaction")
 @Setter
 
 @Getter
 
 @AllArgsConstructor
-public class Product {
+public class Transaction {
 
 	@Id
 	private String id;
-
-	private String customerId;
 	
-	private ProductType tipo;
+	private String productid;
 	
-	private List<String> titulares;
-	 
-	private int limite;
+	private String customerid;
 	
+	private TransactionType tipo;
 	
-	//@DBRef
-	//private List<Transaction> transactions;
+	private int monto;
 	
+	private LocalDateTime date;
 }

@@ -17,5 +17,4 @@ public interface CustomerService {
 	List<Customer> getAllCustomer();
 	
 	
-	
 }

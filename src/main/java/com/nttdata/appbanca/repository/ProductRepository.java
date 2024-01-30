@@ -11,5 +11,6 @@ import com.nttdata.appbanca.model.Product;
 @Repository
 public interface ProductRepository extends MongoRepository<Product, String> {
 	                                      
-	List<Customer> findBy_customerId(String customerid);
+	List<Product> findByCustomerId(String id);
+	 
 }

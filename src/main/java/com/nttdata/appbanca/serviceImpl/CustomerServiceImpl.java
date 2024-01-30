@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nttdata.appbanca.model.Customer;
+import com.nttdata.appbanca.model.Product;
+import com.nttdata.appbanca.model.TransactionType;
 import com.nttdata.appbanca.repository.CustomerRepository;
+import com.nttdata.appbanca.repository.TransactionRepository;
 import com.nttdata.appbanca.service.CustomerService;
+import com.nttdata.appbanca.service.TransactionService;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -27,6 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.findById(id);
 	}
 
+	@Transactional
 	public List<Customer> getAllCustomer() {
 		return customerRepository.findAll();
 	}
